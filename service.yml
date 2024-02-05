@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: primuslearning
+  name: petclinic
 spec:
   selector:
-    app: primuslearning
+    app: petclinic
   ports:
     - protocol: TCP
       port: 80
