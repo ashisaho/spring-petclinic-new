@@ -5,27 +5,26 @@ on:
     branches:
       - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Build Docker image
-      run: |
-        docker build -t spring-petclinic .
-        docker tag spring-petclinic YOUR_DOCKER_REGISTRY_USERNAME/spring-petclinic:latest
-        docker push YOUR_DOCKER_REGISTRY_USERNAME/spring-petclinic:latest
+      jobs:
+        build:
+      
+          runs-on: ubuntu-latest
+          strategy:
+            matrix:
+              java: [ '17' ]
+      
+          steps:
+            - uses: actions/checkout@v2
+            - name: Set up JDK 17
+              uses: actions/setup-java@v2
+              with:
+                java-version: '17'
+                distribution: 'adopt'
+                cache: maven
+            - name: execute permission to Maven
+              run: chmod +x mvnw
+            - name: Build with Maven Wrapper 
+              run: ./mvnw -B package
 
   deploy:
     runs-on: ubuntu-latest
