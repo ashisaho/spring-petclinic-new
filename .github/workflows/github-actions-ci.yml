@@ -41,8 +41,8 @@ jobs:
       run: |
         # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
         docker build -t my-image .
-        docker tag my-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:tag
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:tag
+        docker tag my-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:pet_image
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:pet_image
         
 
     - name: Update kube config
