@@ -1,4 +1,4 @@
-name: CI/CD for Spring PetClinic on EKS
+name: CI/CD for Spring PetClinic
 
 on:
   push:
@@ -6,41 +6,43 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v2.0
-        with:
-          version: 'v1.24.0' # default is latest stable
-        id: install
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      
-      - name: Login to Amazon ECR
-          uses: aws-actions/amazon-ecr-login@v2  
-      
-      - name: Build, tag, and push docker image to Amazon ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: petclinic
-          IMAGE_TAG: 1.1
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
-      - name: Push Docker image to Amazon ECR
-        run: |
-          docker tag my-spring-petclinic:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-spring-petclinic:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-spring-petclinic:latest
+    - name: Build Docker image
+      run: |
+        docker build -t spring-petclinic .
+        docker tag spring-petclinic YOUR_DOCKER_REGISTRY_USERNAME/spring-petclinic:latest
+        docker push YOUR_DOCKER_REGISTRY_USERNAME/spring-petclinic:latest
 
-      - name: Deploy to EKS
-        run: kubectl apply -f kubernetes/deployment.yaml -n my-namesp
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'latest'
+
+    - name: Configure kubeconfig
+      run: echo $KUBE_CONFIG_DATA | base64 -d > kubeconfig
+
+    - name: Deploy to Kubernetes
+      run: kubectl apply -f kubernetes/deployment.yaml
