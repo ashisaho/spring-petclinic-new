@@ -26,7 +26,7 @@ jobs:
           aws-region: us-east-1
           
       - name: Build Docker image
-        run: docker build -t my-spring-petclinic .
+        run: docker build -t my-spring-petclinic -f Dockerfile
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
