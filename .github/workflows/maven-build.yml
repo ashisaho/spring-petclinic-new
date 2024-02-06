@@ -25,5 +25,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Build with Maven Wrapper
+      - name: execute permission to Maven
+        run: chmod +x mvnw
+      - name: Build with Maven Wrapper 
         run: ./mvnw -B package
