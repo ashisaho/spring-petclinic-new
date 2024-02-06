@@ -26,9 +26,9 @@ jobs:
         aws-region: us-east-2
 
     - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-      # run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY_URL }}
+      # id: login-ecr
+      # uses: aws-actions/amazon-ecr-login@v1
+      run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
     
     - name: execute permission to Maven
       run: chmod +x mvnw
@@ -39,8 +39,10 @@ jobs:
         REPOSITORY: petclinic
         IMAGE_TAG: 1.1
       run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic
+        # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
+        docker build -t my-image .
+        docker tag my-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:tag
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:tag
         
 
     - name: Update kube config
