@@ -28,6 +28,8 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+      run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY_URL }}
+    
     - name: execute permission to Maven
       run: chmod +x mvnw
 
@@ -38,9 +40,7 @@ jobs:
         IMAGE_TAG: 1.1
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
-        # docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        # docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/<repository_name>:<tag>
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:1.1
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
         
 
     - name: Update kube config
