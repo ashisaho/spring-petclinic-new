@@ -1,3 +1,36 @@
+##CI build
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+      - name: execute permission to Maven
+        run: chmod +x mvnw
+      - name: Build with Maven Wrapper 
+        run: ./mvnw -B package
+
+
+##CD build
 name: Node js app deploy to EKS
 on:
   push:
@@ -9,8 +42,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    # - name: Checkout code
+    #   uses: actions/checkout@v3
 
     - name: Install kubectl
       uses: azure/setup-kubectl@v2.0
@@ -39,14 +72,14 @@ jobs:
         REPOSITORY: petclinic
         IMAGE_TAG: 1.1
       run: |
-        # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
+        # # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
         docker build -t my-image .
-        docker tag my-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:pet_image
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:pet_image
+        docker tag my-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
         
 
     - name: Pull image
-      run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:pet_image
+      run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
     
     - name: Authenticate kubectl with EKS
       run: aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name petclinic
