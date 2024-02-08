@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: petclinic
-        image: 767397934706.dkr.ecr.us-east-1.amazonaws.com/petclinic:pet_image
+        image: 767397934706.dkr.ecr.us-east-1.amazonaws.com/petclinic:latest
         imagePullPolicy: Always
         resources:
           requests:
