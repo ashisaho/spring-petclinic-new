@@ -28,7 +28,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build with Maven Wrapper 
-        run: ./mvnw -B package
+        run: ./mvnw -B package java -jar target/*.jar
        
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
@@ -58,7 +58,8 @@ jobs:
           IMAGE_TAG: 1.1
         run: |
           # # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
-          docker build --tag petclinic-app .
+          # docker build --tag petclinic-app .
+          ./mvn spring-boot:build-image -Dmodule.image.name=petclinic-app
           docker tag petclinic-app ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
           
