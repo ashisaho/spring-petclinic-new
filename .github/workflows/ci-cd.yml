@@ -28,9 +28,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build with Maven Wrapper 
-        run: 
-          ./mvnw -B package 
-          java -jar target/*.jar
+        run: ./mvnw -B package
        
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
