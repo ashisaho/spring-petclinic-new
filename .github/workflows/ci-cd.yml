@@ -59,8 +59,8 @@ jobs:
         run: |
           # # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
           # docker build --tag petclinic-app .
-          ./mvnw spring-boot:build-image -Dmodule.image.name=petclinic-app
-          docker tag . ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
+          ./mvnw spring-boot:build-image
+          docker tag docker.io/library/spring-petclinic:3.2.0-SNAPSHOT ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petclinic:latest
           
   
