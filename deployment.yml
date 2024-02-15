@@ -1,61 +1,61 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: petclinic
-  labels:
-    app: petclinic
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: petclinic
-  template:
-    metadata:
-      labels:
-        app: petclinic
-    spec:
-      containers:
-      - name: petclinic
-        image: 767397934706.dkr.ecr.us-east-1.amazonaws.com/petclinic:latest
-        imagePullPolicy: Always
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 8080
-        hpa:
-           #to disable the hpa we must set it to false
-           enabled: true
-           # DEPRECATED minReplicas==Replicacount
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: petclinic
+#   labels:
+#     app: petclinic
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: petclinic
+#   template:
+#     metadata:
+#       labels:
+#         app: petclinic
+#     spec:
+#       containers:
+#       - name: petclinic
+#         image: 767397934706.dkr.ecr.us-east-1.amazonaws.com/petclinic:latest
+#         imagePullPolicy: Always
+#         resources:
+#           requests:
+#             memory: "64Mi"
+#             cpu: "250m"
+#           limits:
+#             memory: "128Mi"
+#             cpu: "500m"
+#         ports:
+#         - containerPort: 8080
+#         hpa:
+#            #to disable the hpa we must set it to false
+#            enabled: true
+#            # DEPRECATED minReplicas==Replicacount
 
-           maxReplicas: 5
-           # if specified, hpa will scaleup based on CPU
+#            maxReplicas: 5
+#            # if specified, hpa will scaleup based on CPU
 
-           cpu: 30
-           # if specified, hpa will scaleup based on RAM
-           # memory: 50
+#            cpu: 30
+#            # if specified, hpa will scaleup based on RAM
+#            # memory: 50
 
-           behavior:
-              scaleDown:
-              # this value indicates the amount of time the HPA controller should consider previous recommendations to prevent flapping of the number of replicas.
-                stabilizationWindowSeconds: 300
-              # The scaling policy to use. This will scale up quickly but only scale down a single Pod per 5 minutes.
-                policies:
-                - type: Pods
-                  value: 1
-                  periodSeconds: 300
-              scaleUp:
-                stabilizationWindowSeconds: 0
-                policies:
-                - type: Pods
-                  value: 1
-                  periodSeconds: 15
+#            behavior:
+#               scaleDown:
+#               # this value indicates the amount of time the HPA controller should consider previous recommendations to prevent flapping of the number of replicas.
+#                 stabilizationWindowSeconds: 300
+#               # The scaling policy to use. This will scale up quickly but only scale down a single Pod per 5 minutes.
+#                 policies:
+#                 - type: Pods
+#                   value: 1
+#                   periodSeconds: 300
+#               scaleUp:
+#                 stabilizationWindowSeconds: 0
+#                 policies:
+#                 - type: Pods
+#                   value: 1
+#                   periodSeconds: 15
 
-  strategy:
-   type: RollingUpdate
-   rollingUpdate:
-     maxUnavailable: 1
+#   strategy:
+#    type: RollingUpdate
+#    rollingUpdate:
+#      maxUnavailable: 1
