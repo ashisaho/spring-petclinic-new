@@ -55,7 +55,7 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: petclinic
-          IMAGE_TAG: 1.1
+          # IMAGE_TAG: 1.1
         run: |
           # # docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG . -f Dockerfile
           # docker build --tag petclinic-app .
