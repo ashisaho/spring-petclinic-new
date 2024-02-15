@@ -2,6 +2,7 @@
 # kind: Deployment
 # metadata:
 #   name: petclinic
+#   namespace: test
 #   labels:
 #     app: petclinic
 # spec:
