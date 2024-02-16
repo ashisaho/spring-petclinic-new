@@ -26,7 +26,26 @@ jobs:
           cache: maven
       - name: execute permission to Maven
         run: chmod +x mvnw
+      
+      - name: Test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+      
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Maven Tests
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
 
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: "http://your_sonarqube_server_url"
+          
       - name: Build with Maven Wrapper 
         run: ./mvnw -B package
        
